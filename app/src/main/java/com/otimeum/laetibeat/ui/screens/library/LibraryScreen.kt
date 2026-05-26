@@ -192,11 +192,12 @@ fun AlbumListItem(album: Album) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 专辑封面占位
+            // 专辑封面占位 - 圆角矩形
             Box(
                 modifier = Modifier
                     .size(60.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.small)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             )
 
             Column(modifier = Modifier.weight(1f)) {
@@ -233,11 +234,12 @@ fun ArtistListItem(artist: Artist) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 艺人头像占位
+            // 艺人头像占位 - 圆形
             Box(
                 modifier = Modifier
                     .size(60.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.small)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             )
 
             Column(modifier = Modifier.weight(1f)) {
