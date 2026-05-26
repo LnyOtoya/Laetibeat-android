@@ -22,9 +22,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.otimeum.laetibeat.data.model.LibraryViewType
 import com.otimeum.laetibeat.ui.screens.home.HomeScreen
+import com.otimeum.laetibeat.ui.screens.library.LibraryScreen
 import com.otimeum.laetibeat.ui.screens.player.PlayerScreen
 import com.otimeum.laetibeat.ui.screens.playlist.PlaylistDetailScreen
 import com.otimeum.laetibeat.ui.screens.settings.SettingsScreen
+import com.otimeum.laetibeat.viewmodel.LibraryViewModel
 import com.otimeum.laetibeat.viewmodel.MainViewModel
 
 sealed class Screen(val route: String, val label: String, val icon: @Composable () -> Unit) {
@@ -87,7 +89,8 @@ fun AppNavigation(viewModel: MainViewModel = viewModel()) {
                 )
             }
             composable(Screen.Library.route) {
-                // TODO: Library Screen with filters
+                val libraryViewModel = androidx.lifecycle.viewmodel.compose.viewModel<LibraryViewModel>()
+                LibraryScreen(viewModel = libraryViewModel)
             }
             composable(Screen.Stats.route) {
                 // TODO: Stats Screen

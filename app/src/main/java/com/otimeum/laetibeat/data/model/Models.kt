@@ -18,6 +18,22 @@ data class Playlist(
     val songs: List<Song> = emptyList()
 )
 
+data class Album(
+    val id: String,
+    val title: String,
+    val artist: String,
+    val year: Int? = null,
+    val coverUri: String? = null,
+    val songCount: Int = 0
+)
+
+data class Artist(
+    val id: String,
+    val name: String,
+    val albumCount: Int = 0,
+    val coverUri: String? = null
+)
+
 enum class LibraryViewType {
     ALBUMS,
     ARTISTS,
