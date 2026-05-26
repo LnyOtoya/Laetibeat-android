@@ -6,13 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.otimeum.laetibeat.data.model.Album
 import com.otimeum.laetibeat.data.model.Artist
+import com.otimeum.laetibeat.data.model.Song
 
 class LibraryViewModel : ViewModel() {
 
     enum class FilterType {
         MIXED,    // 混合显示
         ALBUMS,   // 只显示专辑
-        ARTISTS   // 只显示艺人
+        ARTISTS,  // 只显示艺人
+        SONGS     // 只显示歌曲
     }
 
     var selectedFilter by mutableStateOf(FilterType.MIXED)
@@ -40,6 +42,22 @@ class LibraryViewModel : ViewModel() {
         Artist("6", "Michael Jackson", albumCount = 10),
         Artist("7", "Queen", albumCount = 15),
         Artist("8", "Pink Floyd", albumCount = 15)
+    )
+
+    // 模拟歌曲数据
+    val songs = listOf(
+        Song("s1", "晴天", "周杰伦", "叶惠美", 269),
+        Song("s2", "以父之名", "周杰伦", "叶惠美", 299),
+        Song("s3", "夜曲", "周杰伦", "十一月的萧邦", 244),
+        Song("s4", "七里香", "周杰伦", "七里香", 299),
+        Song("s5", "浮夸", "陈奕迅", "U87", 269),
+        Song("s6", "K歌之王", "陈奕迅", "反正是我", 299),
+        Song("s7", "江南", "林俊杰", "第二天堂", 289),
+        Song("s8", "曹操", "林俊杰", "曹操", 269),
+        Song("s9", "温柔", "五月天", "爱情万岁", 269),
+        Song("s10", "倔强", "五月天", "神的孩子都在跳舞", 279),
+        Song("s11", "Hotel California", "Eagles", "Hotel California", 391),
+        Song("s12", "Thriller", "Michael Jackson", "Thriller", 358)
     )
 
     fun setFilter(filter: FilterType) {

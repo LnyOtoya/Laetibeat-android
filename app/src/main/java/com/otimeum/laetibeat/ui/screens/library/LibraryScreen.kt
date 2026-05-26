@@ -20,15 +20,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.otimeum.laetibeat.data.model.Album
 import com.otimeum.laetibeat.data.model.Artist
+import com.otimeum.laetibeat.data.model.LibraryViewType
+import com.otimeum.laetibeat.data.model.Song
 import com.otimeum.laetibeat.ui.components.FilterChipSimple
+import com.otimeum.laetibeat.ui.components.SongListItem
 import com.otimeum.laetibeat.viewmodel.LibraryViewModel
+import com.otimeum.laetibeat.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryScreen(viewModel: LibraryViewModel) {
-    val selectedFilter = viewModel.selectedFilter
-    val albums = viewModel.albums
-    val artists = viewModel.artists
+fun LibraryScreen(
+    libraryViewModel: LibraryViewModel,
+    mainViewModel: MainViewModel
+) {
+    val selectedFilter = libraryViewModel.selectedFilter
+    val albums = libraryViewModel.albums
+    val artists = libraryViewModel.artists
+    val songs = libraryViewModel.songs
+    val enabledViews = mainViewModel.userPreferences.libraryViews
 
     Scaffold(
         topBar = {
@@ -58,7 +67,7 @@ fun LibraryScreen(viewModel: LibraryViewModel) {
                                 .size(32.dp)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .clickable { viewModel.setFilter(LibraryViewModel.FilterType.MIXED) }
+                                .clickable { libraryViewModel.setFilter(LibraryViewModel.FilterType.MIXED) }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
@@ -70,34 +79,55 @@ fun LibraryScreen(viewModel: LibraryViewModel) {
                     }
 
                     // 专辑 Chip
-                    FilterChipSimple(
-                        label = "专辑",
-                        isSelected = selectedFilter == LibraryViewModel.FilterType.ALBUMS,
-                        onClick = {
-                            viewModel.setFilter(
-                                if (selectedFilter == LibraryViewModel.FilterType.ALBUMS) {
-                                    LibraryViewModel.FilterType.MIXED
-                                } else {
-                                    LibraryViewModel.FilterType.ALBUMS
-                                }
-                            )
-                        }
-                    )
+                    if (enabledViews.contains(LibraryViewType.ALBUMS)) {
+                        FilterChipSimple(
+                            label = "专辑",
+                            isSelected = selectedFilter == LibraryViewModel.FilterType.ALBUMS,
+                            onClick = {
+                                libraryViewModel.setFilter(
+                                    if (selectedFilter == LibraryViewModel.FilterType.ALBUMS) {
+                                        LibraryViewModel.FilterType.MIXED
+                                    } else {
+                                        LibraryViewModel.FilterType.ALBUMS
+                                    }
+                                )
+                            }
+                        )
+                    }
 
                     // 艺人 Chip
-                    FilterChipSimple(
-                        label = "艺人",
-                        isSelected = selectedFilter == LibraryViewModel.FilterType.ARTISTS,
-                        onClick = {
-                            viewModel.setFilter(
-                                if (selectedFilter == LibraryViewModel.FilterType.ARTISTS) {
-                                    LibraryViewModel.FilterType.MIXED
-                                } else {
-                                    LibraryViewModel.FilterType.ARTISTS
-                                }
-                            )
-                        }
-                    )
+                    if (enabledViews.contains(LibraryViewType.ARTISTS)) {
+                        FilterChipSimple(
+                            label = "艺人",
+                            isSelected = selectedFilter == LibraryViewModel.FilterType.ARTISTS,
+                            onClick = {
+                                libraryViewModel.setFilter(
+                                    if (selectedFilter == LibraryViewModel.FilterType.ARTISTS) {
+                                        LibraryViewModel.FilterType.MIXED
+                                    } else {
+                                        LibraryViewModel.FilterType.ARTISTS
+                                    }
+                                )
+                            }
+                        )
+                    }
+
+                    // 歌曲 Chip
+                    if (enabledViews.contains(LibraryViewType.SONGS)) {
+                        FilterChipSimple(
+                            label = "歌曲",
+                            isSelected = selectedFilter == LibraryViewModel.FilterType.SONGS,
+                            onClick = {
+                                libraryViewModel.setFilter(
+                                    if (selectedFilter == LibraryViewModel.FilterType.SONGS) {
+                                        LibraryViewModel.FilterType.MIXED
+                                    } else {
+                                        LibraryViewModel.FilterType.SONGS
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
 
                 // 内容列表
@@ -117,16 +147,29 @@ fun LibraryScreen(viewModel: LibraryViewModel) {
                                 ArtistListItem(artist = artist)
                             }
                         }
+                        LibraryViewModel.FilterType.SONGS -> {
+                            items(songs) { song ->
+                                SongListItem(song = song, modifier = Modifier.fillMaxWidth())
+                            }
+                        }
                         LibraryViewModel.FilterType.MIXED -> {
-                            // 混合显示：交替显示专辑和艺人
+                            // 混合显示：只显示启用的视图类型
                             val mixedList = buildList {
-                                addAll(albums.take((albums.size + artists.size) / 2))
-                                addAll(artists.take((albums.size + artists.size) / 2))
+                                if (enabledViews.contains(LibraryViewType.ALBUMS)) {
+                                    addAll(albums.take(3))
+                                }
+                                if (enabledViews.contains(LibraryViewType.ARTISTS)) {
+                                    addAll(artists.take(3))
+                                }
+                                if (enabledViews.contains(LibraryViewType.SONGS)) {
+                                    addAll(songs.take(3))
+                                }
                             }
                             items(mixedList) { item ->
                                 when (item) {
                                     is Album -> AlbumListItem(album = item)
                                     is Artist -> ArtistListItem(artist = item)
+                                    is Song -> SongListItem(song = item, modifier = Modifier.fillMaxWidth())
                                     else -> {}
                                 }
                             }

@@ -90,7 +90,7 @@ fun AppNavigation(viewModel: MainViewModel = viewModel()) {
             }
             composable(Screen.Library.route) {
                 val libraryViewModel = androidx.lifecycle.viewmodel.compose.viewModel<LibraryViewModel>()
-                LibraryScreen(viewModel = libraryViewModel)
+                LibraryScreen(libraryViewModel = libraryViewModel, mainViewModel = viewModel)
             }
             composable(Screen.Stats.route) {
                 // TODO: Stats Screen
