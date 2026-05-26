@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.otimeum.laetibeat.data.model.LibraryViewType
 import com.otimeum.laetibeat.ui.screens.home.HomeScreen
+import com.otimeum.laetibeat.ui.screens.library.AlbumDetailScreen
 import com.otimeum.laetibeat.ui.screens.library.LibraryScreen
 import com.otimeum.laetibeat.ui.screens.player.PlayerScreen
 import com.otimeum.laetibeat.ui.screens.playlist.PlaylistDetailScreen
@@ -34,6 +35,7 @@ sealed class Screen(val route: String, val label: String, val icon: @Composable 
     object Library : Screen("library", "音乐库", { Icon(Icons.Default.LibraryMusic, null) })
     object Stats : Screen("stats", "统计", { Icon(Icons.Default.ShowChart, null) })
     object PlaylistDetail : Screen("playlist_detail/{playlistId}", "歌单详情", { Icon(Icons.Default.PlaylistPlay, null) })
+    object AlbumDetail : Screen("album_detail/{albumId}", "专辑详情", { Icon(Icons.Default.LibraryMusic, null) })
     object Player : Screen("player/{songId}", "播放器", { Icon(Icons.Default.LibraryMusic, null) })
 }
 
@@ -90,7 +92,13 @@ fun AppNavigation(viewModel: MainViewModel = viewModel()) {
             }
             composable(Screen.Library.route) {
                 val libraryViewModel = androidx.lifecycle.viewmodel.compose.viewModel<LibraryViewModel>()
-                LibraryScreen(libraryViewModel = libraryViewModel, mainViewModel = viewModel)
+                LibraryScreen(
+                    libraryViewModel = libraryViewModel,
+                    mainViewModel = viewModel,
+                    onAlbumClick = { album ->
+                        navController.navigate("album_detail/${album.id}")
+                    }
+                )
             }
             composable(Screen.Stats.route) {
                 // TODO: Stats Screen
@@ -102,6 +110,22 @@ fun AppNavigation(viewModel: MainViewModel = viewModel()) {
                     PlaylistDetailScreen(playlist = it) { song ->
                         navController.navigate("player/${song.id}")
                     }
+                }
+            }
+            composable("album_detail/{albumId}") { backStackEntry ->
+                val albumId = backStackEntry.arguments?.getString("albumId")
+                val libraryViewModel = androidx.lifecycle.viewmodel.compose.viewModel<LibraryViewModel>()
+                val album = libraryViewModel.albums.find { it.id == albumId }
+                val albumSongs = libraryViewModel.songs.filter { it.album == album?.title }
+                album?.let {
+                    AlbumDetailScreen(
+                        album = it,
+                        songs = albumSongs,
+                        onBackClick = { navController.popBackStack() },
+                        onSongClick = { song ->
+                            navController.navigate("player/${song.id}")
+                        }
+                    )
                 }
             }
             composable("player/{songId}") { backStackEntry ->

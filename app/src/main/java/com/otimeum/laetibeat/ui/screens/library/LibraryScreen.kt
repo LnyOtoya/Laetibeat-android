@@ -31,7 +31,8 @@ import com.otimeum.laetibeat.viewmodel.MainViewModel
 @Composable
 fun LibraryScreen(
     libraryViewModel: LibraryViewModel,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    onAlbumClick: (Album) -> Unit = {}
 ) {
     val selectedFilter = libraryViewModel.selectedFilter
     val albums = libraryViewModel.albums
@@ -139,7 +140,7 @@ fun LibraryScreen(
                     when (selectedFilter) {
                         LibraryViewModel.FilterType.ALBUMS -> {
                             items(albums) { album ->
-                                AlbumListItem(album = album)
+                                AlbumListItem(album = album, onClick = { onAlbumClick(album) })
                             }
                         }
                         LibraryViewModel.FilterType.ARTISTS -> {
@@ -167,7 +168,7 @@ fun LibraryScreen(
                             }
                             items(mixedList) { item ->
                                 when (item) {
-                                    is Album -> AlbumListItem(album = item)
+                                    is Album -> AlbumListItem(album = item, onClick = { onAlbumClick(item) })
                                     is Artist -> ArtistListItem(artist = item)
                                     is Song -> SongListItem(song = item, modifier = Modifier.fillMaxWidth())
                                     else -> {}
@@ -182,9 +183,10 @@ fun LibraryScreen(
 }
 
 @Composable
-fun AlbumListItem(album: Album) {
+fun AlbumListItem(album: Album, onClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier
