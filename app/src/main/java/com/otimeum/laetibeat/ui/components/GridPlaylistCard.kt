@@ -17,8 +17,7 @@ fun GridPlaylistCard(
     playlist: Playlist,
     onClick: () -> Unit
 ) {
-    // 为每个歌单生成一个固定的随机形状（基于 ID）
-    val shapeType = remember(playlist.id) { getRandomShape() }
+    val shapeType = getShapeBySongCount(playlist.songs.size)
     val shapeColor = MaterialTheme.colorScheme.primaryContainer
 
     Card(

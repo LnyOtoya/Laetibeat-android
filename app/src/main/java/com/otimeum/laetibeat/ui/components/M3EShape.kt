@@ -144,8 +144,17 @@ val ArchShape = OrganicShape { size ->
 
 
 /**
- * 获取随机形状
+ * 根据歌曲数量获取形状
+ * ≤20首: PILL
+ * >20且≤30首: CIRCLE
+ * >30且≤40首: ARCH
+ * >40首: SQUARE
  */
-fun getRandomShape(): M3EShapeType {
-    return M3EShapeType.values().random()
+fun getShapeBySongCount(songCount: Int): M3EShapeType {
+    return when {
+        songCount <= 20 -> M3EShapeType.PILL
+        songCount <= 30 -> M3EShapeType.CIRCLE
+        songCount <= 40 -> M3EShapeType.ARCH
+        else -> M3EShapeType.SQUARE
+    }
 }
